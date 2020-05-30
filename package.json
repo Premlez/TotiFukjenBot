@@ -1,0 +1,19 @@
+{
+  "name": "totifukjenibot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@klasa/core": "github:dirigeants/core#build",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "klasa": "github:dirigeants/klasa#build",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Premlez",
+  "license": "MIT"
+}

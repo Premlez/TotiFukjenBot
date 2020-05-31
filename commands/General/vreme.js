@@ -18,7 +18,7 @@ class Vreme extends Command {
         //console.log(await data.json());
         const dataxml = await (await fetch('https://meteo.arso.gov.si/uploads/probase/www/observ/surface/text/sl/observationAms_MARIBOR_VRBAN-PLA_latest.xml')).text(); //To združi zogrnji dve komandi
         const { data: { metData: [ data ] } } = await parseStringPromise(dataxml);
-        console.log(data);
+        //console.log(data); //Outputs API to console  -- FOR DEBUGGING
 
         return message.send(mb => //Embeded sporočilo
             mb.setEmbed(em => 

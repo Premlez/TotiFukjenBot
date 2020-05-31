@@ -1,11 +1,8 @@
 const { Command } = require('klasa');
 const fetch = require('node-fetch');
-const qs = require('querystring');
+const { parseStringPromise } = require('xml2js');
 
 class Vreme extends Command {
-
-    static kMBLat = '46.554649';
-    static kMBLon = '15.645881';
 
     constructor(store, directory, files) {
 
@@ -17,22 +14,30 @@ class Vreme extends Command {
 
     async run(message) {
 
-        const params = qs.stringify({
-            lat: Vreme.kMBLat,
-            lon: Vreme.kMBLon,
-        });
-
         //const data = await fetch(`https://opendata.si/vreme/report/?${params}`);
         //console.log(await data.json());
-        const data = await (await fetch(`https://opendata.si/vreme/report/?${params}`)).json(); //To združi zogrnji dve komandi
+        const dataxml = await (await fetch('https://meteo.arso.gov.si/uploads/probase/www/observ/surface/text/sl/observationAms_MARIBOR_VRBAN-PLA_latest.xml')).text(); //To združi zogrnji dve komandi
+        const { data: { metData: [ data ] } } = await parseStringPromise(dataxml);
         console.log(data);
 
         return message.send(mb => //Embeded sporočilo
             mb.setEmbed(em => 
                 em
                     .setTitle('Vreme - Maribor')
-                    .setDescription('Prikazujem samo Maribor. Če ti kaj ni prav, se poj jokat. Se mi prav nič ne smiliš.')
-                    .setColor(0x2d006b)
+                    //.setDescription('Vreme za Maribor, čuj. Pazi se Tajzija, da ti ga ne pajsne, go hodiš naked okoli, dumbass.')
+                    .setColor(0x007bff) //Stranska barva
+                    .setURL('http://vreme.arso.gov.si/napoved/Maribor/graf') //URL na title
+                    .setImage(`https://meteo.arso.gov.si/uploads/probase/www/observ/webcam/${data.webcam[0]._}`) //Webcam slika
+                    /* ---POSODOBITVENI PODATKI O VREMENSKI POSTAJI---*/
+                    .addField('Naziv vremenske postaje:', data.domain_title[0], true)
+                    .addField('Zadnja posodobitev:', data.tsUpdated[0], true)
+                    /* ---TRENUTNO STANJE PODATKOV NA POSTAJI--- */
+                    //.addField('\u200B', 'Trenutno stanje:')
+                    .addField('Temperatura:', `${data.t[0]}°C`)
+                    .addField('Relativna vlažnost:', `${data.rh[0]}%`)
+                    .addField('Hitrost vetra:', `${data.ff_val_kmh} km/h`)
+                    .addField('Višina snežne odeje:', `${data.snow[0]} cm`)
+                    .addField('Temperatura tal v globini 5 cm:', `${data.tg_5_cm[0]}°C`)
         ));
     }
 
